@@ -1,11 +1,13 @@
 package com.reservo.entities;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,7 +18,6 @@ import lombok.ToString;
 @Entity
 @Table(name = "users")
 @NoArgsConstructor
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @AllArgsConstructor
 @Getter
 @Setter
@@ -40,6 +41,9 @@ public class UserEntity extends BaseEntity {
 	
 	@Column(length = 300, nullable = false, name="address")
 	private String address;	
+	
+	@OneToMany(mappedBy="user", fetch = FetchType.EAGER)
+	private List<ReservationEntity> reservations = new ArrayList<ReservationEntity>();
 	
 	@Enumerated(EnumType.STRING)
 	@Column(length = 30)

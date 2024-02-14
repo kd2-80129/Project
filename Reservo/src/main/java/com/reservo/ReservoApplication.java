@@ -1,7 +1,6 @@
 package com.reservo;
 
 import java.time.LocalDate;
-
 import org.modelmapper.AbstractConverter;
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
@@ -30,7 +29,15 @@ public class ReservoApplication {
 		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT)
 				.setPropertyCondition(Conditions.isNotNull());// only non null properties will be transferred from src
 		// --> dest , during the mapping
+		modelMapper.addConverter(new StringToDateConverter());
 		return modelMapper;
+	}
+	
+	public class StringToDateConverter extends AbstractConverter<String,LocalDate> {
+	    @Override
+	    protected LocalDate convert(String source) {
+	        return LocalDate.parse(source);
+	    }
 	}
 	
 //	@Bean
