@@ -1,7 +1,9 @@
 package com.reservo.entities;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -46,9 +48,9 @@ public class RestaurantEntity extends BaseEntity {
 	@Column(nullable = false, name="is_open")
 	private boolean isOpen;
 	
-	@OneToMany(mappedBy = "restaurant", fetch = FetchType.EAGER, 
+	@OneToMany(mappedBy = "restaurant", fetch = FetchType.LAZY, 
 			orphanRemoval = true, cascade = CascadeType.ALL)
-	private List<TransactionEntity> transactions = new ArrayList<TransactionEntity>();
+	private Set<TransactionEntity> transactions = new HashSet<TransactionEntity>();
 	
 	@Column(length = 300, nullable = false, name="address")
 	private String address;

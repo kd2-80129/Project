@@ -11,9 +11,11 @@ import org.springframework.stereotype.Service;
 
 import com.reservo.customexceptions.ResourceNotFoundException;
 import com.reservo.dao.CityDao;
+import com.reservo.dao.OwnerDao;
 import com.reservo.dao.RestaurantDao;
 import com.reservo.dto.RestaurantReqDto;
 import com.reservo.entities.CityEntity;
+import com.reservo.entities.OwnerEntity;
 import com.reservo.entities.RestaurantEntity;
 
 @Service
@@ -29,6 +31,9 @@ public class RestaurantServiceImpl implements RestaurantService{
 	@Autowired
 	private ModelMapper mapper;
 	
+	@Autowired
+	private OwnerDao ownerDao;
+	
 	@Override
 	public List<RestaurantEntity> getAllRestaurantsByCityId(@Valid Long cityId) {
 		
@@ -40,7 +45,10 @@ public class RestaurantServiceImpl implements RestaurantService{
 		RestaurantEntity restaurant = mapper.map(reqDto, RestaurantEntity.class);
 		CityEntity city = cityDao.findById(cityId).orElseThrow(() -> new ResourceNotFoundException("City Not Found...!!"));
 		restaurant.setCity(city);
-		return null;
+		OwnerEntity owner = ownerDao.findById(id)
+				.orElseThrow( ()-> new ResourceNotFoundException("Resource not found") );
+		restaurant.setOwner(owner);
+		return restaurantDao.save(restaurant);
 	}
 
 }

@@ -1,5 +1,5 @@
 package com.reservo.entities;
 
 public enum BookingStatus {
-	ACTIVE, CANCLED, EXPIRED
+	ACTIVE, CANCLED, EXPIRED,PENDING
 }

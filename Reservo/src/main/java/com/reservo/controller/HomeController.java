@@ -11,6 +11,7 @@ import com.reservo.service.HomeService;
 
 @RestController
 @RequestMapping("/")
+@CrossOrigin("*")
 public class HomeController {
 	
 	@Autowired

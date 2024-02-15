@@ -7,6 +7,7 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,8 +28,8 @@ public class RestaurantController {
 	private RestaurantService restaurantService;
 	
 	@PostMapping("/{cityId}")
-	public List<RestaurantEntity> getAllRestaurantsBByCityId(@PathVariable @Valid Long cityId){
-		return restaurantService.getAllRestaurantsByCityId(cityId);
+	public ResponseEntity<?> getAllRestaurantsBByCityId(@PathVariable @Valid Long cityId){
+		return ResponseEntity.status(HttpStatus.OK).body(restaurantService.getAllRestaurantsByCityId(cityId));
 	}
 	
 	@PostMapping("/add/{cityId}")
@@ -36,10 +37,12 @@ public class RestaurantController {
 		HttpSession session = req.getSession();
 		
 		OwnerEntity owner = (OwnerEntity) session.getAttribute("curr_owner");
+		System.out.println(owner);
 		
 		if(owner != null) {
 			restaurantService.addRestaurant(reqDto, owner.getId(), cityId);
 		}
-		return null;
+		String msg = "Restaurant Added...!!";
+		return ResponseEntity.status(HttpStatus.OK).body(msg);
 	}
 }
