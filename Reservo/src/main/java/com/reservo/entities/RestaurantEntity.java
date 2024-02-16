@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -43,12 +43,13 @@ public class RestaurantEntity extends BaseEntity {
 	
 	@OneToOne
 	@JoinColumn(name="owner_id", nullable = false)
+	@JsonIgnore
 	private OwnerEntity owner;
 	
 	@Column(nullable = false, name="is_open")
 	private boolean isOpen;
 	
-	@OneToMany(mappedBy = "restaurant", fetch = FetchType.LAZY, 
+	@OneToMany(mappedBy = "restaurant", fetch = FetchType.EAGER, 
 			orphanRemoval = true, cascade = CascadeType.ALL)
 	private Set<TransactionEntity> transactions = new HashSet<TransactionEntity>();
 	
@@ -57,6 +58,7 @@ public class RestaurantEntity extends BaseEntity {
 	
 	@OneToOne
 	@JoinColumn(name="city_id")
+	@JsonIgnore
 	private CityEntity city;
 	
 	@Column(name="available_seats")

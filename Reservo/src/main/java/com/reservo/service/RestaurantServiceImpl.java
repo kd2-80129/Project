@@ -1,14 +1,11 @@
 package com.reservo.service;
 
 import java.util.List;
-
 import javax.transaction.Transactional;
 import javax.validation.Valid;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.reservo.customexceptions.ResourceNotFoundException;
 import com.reservo.dao.CityDao;
 import com.reservo.dao.OwnerDao;
