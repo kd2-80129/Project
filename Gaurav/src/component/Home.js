@@ -49,6 +49,7 @@ const pickOption = [
     image: <RamenDiningIcon />
   }
 ];
+
 const Home = () => {
   return (
     <div>

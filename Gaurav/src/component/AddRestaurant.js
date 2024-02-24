@@ -2,39 +2,44 @@ import { Button, Card, CardActionArea, CardContent, InputLabel, MenuItem, Select
 import Autocomplete from "@mui/material/Autocomplete";
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom'
+import { useLocation } from 'react-router-dom';
 
-const SignUp = () => {
+const AddRestaurant = () => {
     const [signUpData, setSignUpData] = useState({
-        firstName: '',
-        lastName: '',
-        email: '',
-        mobileNo: '',
-        password: '',
-        confirmPassword: '',
-        address: '',
-        userRole: ''
+        address: "",
+        amount: 0,
+        availableSeats: 0,
+        email: "",
+        restaurantName: "",
+        status: ""
     });
     const [isDisable, setIsDisable] = useState(true);
-
+    const [ownerId, setOwnerId] = useState('');
     const navigate = useNavigate();
-
+    const location = useLocation();
+    const { state } = location;
     const handleOnChange = (e) => {
-        console.log("THis", e.target.value);
         setSignUpData({
             ...signUpData,
-            [e.target.name]: e.target.value,
+            [e.target.name]: (e.target.name === 'availableSeats' || e.target.name === 'amount') ?
+             parseInt(e.target.value)
+                : e.target.value
+            ,
         });
     };
-
-    const handleSubmit = async (e) => {
-        // Integrate Api here
+    useEffect(() => {
+        const userData = sessionStorage.getItem('userDetails')
+        const jsonObject = JSON.parse(userData);
+        setOwnerId(jsonObject.id)
+    }, [])
+    const handleAdd = async (e) => {
         e.preventDefault();
+        debugger
         try {
-            const response = await fetch('http://127.0.0.1:8080/user/signup', {
+            const response = await fetch(`http://127.0.0.1:8080/restaurant/add/${ownerId}/${state}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    // Add any other headers if needed
                 },
                 body: JSON.stringify(signUpData),
             });
@@ -43,10 +48,7 @@ const SignUp = () => {
                 throw new Error('Network response was not ok');
             }
             resetForm();
-            navigate('/login')
-            // Handle successful response here
-            // const responseData = await response.json();
-            // console.log(responseData);
+            navigate('/owner')
         } catch (error) {
             console.error('Error:', error);
         }
@@ -56,42 +58,34 @@ const SignUp = () => {
 
     const resetForm = () => {
         setSignUpData({
-            firstName: '',
-            lastName: '',
-            email: '',
-            mobileNo: '',
-            password: '',
-            confirmPassword: '',
-            address: '',
-            userRole: null
+            address: "",
+            amount: 0,
+            availableSeats: 0,
+            email: "",
+            restaurantName: "",
+            status: ""
         });
     };
 
     useEffect(() => {
-        // Ensure all required fields are filled, including `userType`
         setIsDisable(
-            signUpData.firstName === '' ||
-            signUpData.lastName === '' ||
-            signUpData.confirmPassword === '' ||
-            signUpData.email === '' ||
-            signUpData.mobileNo === '' ||
-            signUpData.password === '' ||
             signUpData.address === '' ||
-            signUpData.userRole === ''
+            signUpData.amount === 0 ||
+            signUpData.availableSeats === 0 ||
+            signUpData.email === '' ||
+            signUpData.restaurantName === '' ||
+            signUpData.status === ''
         );
-    }, [signUpData.firstName,
-    signUpData.lastName,
-    signUpData.confirmPassword,
+    }, [signUpData.address,
+    signUpData.amount,
+    signUpData.availableSeats,
     signUpData.email,
-    signUpData.mobileNo,
-    signUpData.password,
-    signUpData.address,
-    signUpData.userRole]);
+    signUpData.restaurantName,
+    signUpData.status]);
 
-    const allUsers = [
-        { label: "Admin", value: "ROLE_ADMIN" },
-        { label: "Customer", value: "ROLE_CUSTOMER" },
-        { label: "Owner", value: "ROLE_OWNER" }
+    const openClose = [
+        { label: "Close", value: "CLOSE" },
+        { label: "Open", value: "OPEN" },
     ];
 
     return (
@@ -99,95 +93,76 @@ const SignUp = () => {
             <CardActionArea>
                 <CardContent>
                     <Typography gutterBottom variant="h5" component="div">
-                        SignUp
+                        Add Restaurant
                     </Typography>
-
                     <TextField style={{ width: "100%", marginBottom: '5px' }}
                         id="outlined-multiline-flexible"
-                        label="First Name"
+                        label="Restaurant Name"
                         multiline
                         maxRows={4}
-                        name='firstName'
-                        value={signUpData.firstName}
+                        name='restaurantName'
+                        value={signUpData.restaurantName}
                         onChange={(e) => handleOnChange(e)}
                     />
                     <TextField style={{ width: "100%", marginBottom: '5px' }}
                         id="outlined-multiline-flexible"
-                        label="Last Name"
-                        multiline
-                        maxRows={4}
-                        name='lastName'
-                        value={signUpData.lastName}
-                        onChange={(e) => handleOnChange(e)}
-
-                    />
-                    <TextField style={{ width: "100%", marginBottom: '5px' }}
-                        id="outlined-multiline-flexible"
-                        label="Email"
+                        label="email"
                         multiline
                         maxRows={4}
                         name='email'
                         value={signUpData.email}
                         onChange={(e) => handleOnChange(e)}
+
                     />
                     <TextField style={{ width: "100%", marginBottom: '5px' }}
                         id="outlined-multiline-flexible"
-                        label="Mobile No."
-                        multiline
-                        maxRows={4}
-                        name='mobileNo'
-                        value={signUpData.mobileNo}
-                        onChange={(e) => handleOnChange(e)}
-                    />
-                    <TextField style={{ width: "100%", marginBottom: '5px' }}
-                        id="outlined-multiline-flexible"
-                        label="Password"
-                        multiline
-                        maxRows={4}
-                        name='password'
-                        value={signUpData.password}
-                        onChange={(e) => handleOnChange(e)}
-                    />
-                    <TextField style={{ width: "100%", marginBottom: '5px' }}
-                        id="outlined-multiline-flexible"
-                        label="Re-Enter Password"
-                        multiline
-                        maxRows={4}
-                        name='confirmPassword'
-                        value={signUpData.confirmPassword}
-                        onChange={(e) => handleOnChange(e)}
-                    />
-                    <TextField style={{ width: "100%", marginBottom: '5px' }}
-                        id="outlined-multiline-flexible"
-                        label="Address"
+                        label="address"
                         multiline
                         maxRows={4}
                         name='address'
                         value={signUpData.address}
                         onChange={(e) => handleOnChange(e)}
                     />
+                    <TextField style={{ width: "100%", marginBottom: '5px' }}
+                        id="outlined-multiline-flexible"
+                        label="Amount"
+                        multiline
+                        maxRows={4}
+                        name='amount'
+                        value={signUpData.amount}
+                        type='number'
+                        onChange={(e) => handleOnChange(e)}
+                    />
+                    <TextField style={{ width: "100%", marginBottom: '5px' }}
+                        id="outlined-multiline-flexible"
+                        label="Available Seates"
+                        multiline
+                        maxRows={4}
+                        name='availableSeats'
+                        type='number'
+                        value={signUpData.availableSeats}
+                        onChange={(e) => handleOnChange(e)}
+                    />
                     <InputLabel id="demo-simple-select-label">Role</InputLabel>
-
                     <Select
                         sx={{ width: '100px' }}
                         labelId="demo-simple-select-label"
                         id="demo-simple-select"
                         value={signUpData.userRole}
-                        label="Role"
-                        name='userRole'
+                        label="Status"
+                        name='status'
                         onChange={(e) => handleOnChange(e)}
                     >
-                        {allUsers.map((item, index) => (
+                        {openClose.map((item, index) => (
                             <MenuItem key={index} value={item.value}>{item.label}</MenuItem>
                         ))}
-                        
                     </Select>
                     <br />
-                    <Button disabled={isDisable} variant="contained" onClick={handleSubmit}>Submit</Button>
+                    <Button variant="contained" onClick={handleAdd}>Add</Button>
                 </CardContent>
             </CardActionArea>
         </Card>
     )
 };
 
-export default SignUp;
+export default AddRestaurant;
